@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+	<context:property-placeholder
+		location="classpath:db.properties" />
+
+	<context:component-scan base-package="com.atguigu.service"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${driverClassName}" />
+		<property name="url" value="${url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.atguigu.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean" />
+	</bean>
+
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<tx:advice id="tx-advice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut expression="execution(* com.atguigu.service..*.*(..))"
+			id="pointcut" />
+		<aop:advisor advice-ref="tx-advice" pointcut-ref="pointcut" />
+	</aop:config>
+
+
+	<!-- 使用dubbo发布服务 -->
+	<!-- 提供方应用信息，用于计算依赖关系 -->
+	<dubbo:application name="atguigu_service" />
+	<dubbo:registry protocol="zookeeper" address="192.168.247.129:2181" />
+	<!-- 用dubbo协议在20880端口暴露服务 -->
+	<dubbo:protocol name="dubbo" port="20880" />
+	<!-- 声明需要暴露的服务接口 -->
+	<dubbo:service id="searchService" interface="com.atguigu.service.SearchService"
+		ref="searchServiceImp" />
+	<dubbo:service id="attrService" interface="com.atguigu.service.AttrService"
+		ref="attrServiceImp" />
+	<dubbo:service id="orderService" interface="com.atguigu.service.OrderService"
+		ref="orderServiceImp" />
+	<dubbo:service id="shoppingCartService" interface="com.atguigu.service.ShoppingCartService"
+		ref="shoppingCartServiceImp" />
+
+
+</beans>

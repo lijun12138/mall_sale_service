@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mapper.AttrMapper">
+
+	<select id="select_attr_list" resultMap="select_attr_list_map">
+		select
+		attr.id as attr_id,val.id as val_id,attr.*,val.* from t_mall_attr attr inner JOIN
+		t_mall_value val on attr.Id=val.shxm_id
+		where attr.flbh2=#{calss_2}
+	</select>
+	<resultMap type="com.atguigu.bean.OBJECT_T_MALL_ATTR" id="select_attr_list_map"
+		autoMapping="true">
+		<result column="attr_id" property="id"/>
+		<collection property="attr_value_list" ofType="com.atguigu.bean.T_MALL_VALUE" autoMapping="true">
+			<result column="val_id" property="id"/>
+		</collection>
+	</resultMap>
+
+	
+</mapper>

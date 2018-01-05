@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mapper.OrderMapper">
+
+	<insert id="insert_order" parameterType="com.atguigu.bean.T_MALL_ORDER"
+		useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		insert into
+		t_mall_order(
+		shhr,
+		zje,
+		jdh,
+		yh_id,
+		dzh_id,
+		dzh_mch
+		) values(
+		#{shhr},
+		#{zje},
+		#{jdh},
+		#{yh_id},
+		#{dzh_id},
+		#{dzh_mch}
+		)
+	</insert>
+
+	<insert id="insert_flow" parameterType="com.atguigu.bean.OBJECT_T_MALL_FLOW"
+		useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		insert into
+		t_mall_flow(
+		psfsh,
+		yh_id,
+		dd_id,
+		mqdd,
+		mdd
+		) values(
+		#{psfsh},
+		#{yh_id},
+		#{dd_id},
+		#{mqdd},
+		#{mdd}
+		)
+	</insert>
+
+
+	<insert id="insert_info" parameterType="com.atguigu.bean.T_MALL_ORDER_INFO">
+		insert into
+		t_mall_order_info(
+		dd_id,
+		sku_id,
+		sku_mch,
+		shp_tp,
+		sku_jg,
+		sku_shl,
+		sku_kcdz,
+		flow_id,
+		gwch_id
+		) values(
+		#{dd_id},
+		#{sku_id},
+		#{sku_mch},
+		#{shp_tp},
+		#{sku_jg},
+		#{sku_shl},
+		#{sku_kcdz},
+		#{flow_id},
+		#{gwch_id}
+		)
+	</insert>
+
+
+	<delete id="delete_cart" parameterType="int">
+		delete from
+		t_mall_shoppingCar where id=#{id}
+	</delete>
+
+	
+	
+	<select id="select_kc_for_update" parameterType="int" resultType="long">
+		select kc from
+		t_mall_sku where id=#{sku_id} for update
+	</select>
+
+	<update id="update_order" parameterType="com.atguigu.bean.T_MALL_ORDER">
+		update t_mall_order set
+		jdh=#{jdh},yjsdshj=#{yjsdshj} where id=#{id}
+	</update>
+
+	<update id="update_flow" parameterType="com.atguigu.bean.OBJECT_T_MALL_FLOW">
+		update t_mall_flow set
+		psshj=#{psshj},psmsh=#{psmsh},ywy=#{ywy},lxfsh=#{lxfsh} where id=#{id}
+	</update>
+
+	<update id="update_info" parameterType="com.atguigu.bean.T_MALL_ORDER_INFO">
+		update t_mall_sku set
+		kc=kc-#{sku_shl},sku_xl=sku_xl+#{sku_shl} where id=#{sku_id}
+	</update>
+	
+	<select id="select_kc" parameterType="int" resultType="long">
+		select kc from
+		t_mall_sku where id=#{sku_id}
+	</select>
+	
+	<select id="select_kc_enough" parameterType="int" resultType="int">
+		select count(*) from t_mall_sku where kc>30 and id=#{sku_id} 
+	</select>
+	
+</mapper>

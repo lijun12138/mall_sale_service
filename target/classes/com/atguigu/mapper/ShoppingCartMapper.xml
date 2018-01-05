@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.mapper.ShoppingCartMapper">
+
+	<select id="select_cart_by_sku_id" parameterType="int"
+		resultType="com.atguigu.bean.T_MALL_SHOPPINGCART">
+		select * from t_mall_shoppingCar where sku_id=#{sku_id}
+	</select>
+	
+	<select id="select_list_cart_by_user_id" parameterType="int"
+		resultType="com.atguigu.bean.T_MALL_SHOPPINGCART">
+		select * from t_mall_shoppingCar where yh_id=#{id}
+	</select>
+	<insert id="insert_cart" parameterType="com.atguigu.bean.T_MALL_SHOPPINGCART">
+		insert into
+		t_mall_shoppingCar(
+		sku_mch,
+		sku_jg,
+		tjshl,
+		hj,
+		yh_id,
+		shp_id,
+		sku_id,
+		shp_tp,
+		shfxz,
+		kcdz
+		)values(
+		#{sku_mch},
+		#{sku_jg},
+		#{tjshl},
+		#{hj},
+		#{yh_id},
+		#{shp_id},
+		#{sku_id},
+		#{shp_tp},
+		#{shfxz},
+		#{kcdz}
+		)
+	</insert>
+	
+	<update id="updata_cart" parameterType="com.atguigu.bean.T_MALL_SHOPPINGCART">
+		update t_mall_shoppingCar 
+		<set>
+			<if test="tjshl!=0">
+				tjshl = #{tjshl},
+			</if>
+			<if test="hj!=0">
+				hj = #{hj},
+			</if>
+			<if test="shfxz!=null and shfxz!=''">
+				shfxz = #{shfxz},
+			</if>
+		</set> 
+		where sku_id=#{sku_id}
+	</update>
+	
+	<delete id="delete_cart" parameterType="com.atguigu.bean.T_MALL_SHOPPINGCART">
+		delete from t_mall_shoppingCar where sku_id=#{sku_id}
+	</delete>
+</mapper>
